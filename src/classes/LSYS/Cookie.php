@@ -53,7 +53,7 @@ class Cookie {
 	 * @param   mixed   $default    default value to return
 	 * @return  string
 	 */
-	public static function get($key, $default = NULL)
+	public static function get(string $key, $default = NULL)
 	{
 		if ( ! isset($_COOKIE[$key]))
 		{
@@ -95,7 +95,7 @@ class Cookie {
 	 * @param   string  $name   cookie name
 	 * @return  boolean
 	 */
-	public static function delete($name,$path=null,$domain=null)
+	public static function delete($name,$path=null,$domain=null):bool
 	{
 		// Remove the cookie
 		unset($_COOKIE[$name]);
@@ -108,7 +108,7 @@ class Cookie {
 			$domain=Cookie::$domain;
 		}
 		// Nullify the cookie and make it expire
-		return @setcookie($name, NULL, -86400,$path, $domain);
+		return (bool)@setcookie($name, NULL, -86400,$path, $domain);
 	}
 	
 	/**
@@ -120,7 +120,7 @@ class Cookie {
 	 * @param   string  $value  value of cookie
 	 * @return  string
 	 */
-	protected static function salt($name, $value)
+	protected static function salt(string $name,?string $value):string
 	{
 		// Require a valid salt
 		return substr(sha1($name.$value.Cookie::$salt),0,12);
@@ -138,7 +138,7 @@ class Cookie {
 	 * @return  boolean
 	 * @uses    Cookie::salt
 	 */
-	public static function set($name, $value, $expiration = NULL,$path=NULL,$domain=NULL,$secure=NULL,$httponly=NULL)
+	public static function set(string $name, ?string $value, ?int $expiration = NULL,?string $path=NULL,?string $domain=NULL,?bool $secure=NULL,?bool $httponly=NULL):bool
 	{
 		if ($expiration === NULL)
 		{
@@ -169,7 +169,7 @@ class Cookie {
 		// Add the salt to the cookie value
 		if (Cookie::$salt!=null) $value = Cookie::salt($name, $value).'~'.$value;
 	
-		return @setcookie($name, $value, $expiration, $path,$domain, $secure, $httponly);
+		return (bool)@setcookie($name, $value, $expiration, $path,$domain, $secure, $httponly);
 	}
 
 }
